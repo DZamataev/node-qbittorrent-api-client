@@ -1,0 +1,16 @@
+services:
+  qbittorrent-test:
+    image: qbittorrentofficial/qbittorrent-nox:latest
+    container_name: node-qbittorrent-api-client-test
+    ports:
+      - "18080:18080"
+      - "16881:6881"
+      - "16881:6881/udp"
+    environment:
+      QBT_LEGAL_NOTICE: confirm
+      QBT_WEBUI_PORT: 18080
+      QBT_TORRENTING_PORT: 6881
+      TZ: Europe/Moscow
+    volumes:
+      - ./.docker-test/config:/config
+      - ./.docker-test/downloads:/downloads

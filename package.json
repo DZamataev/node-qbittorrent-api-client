@@ -1,0 +1,18 @@
+{
+  "name": "node-qbittorrent-api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CLI for qBittorrent WebUI API",
+  "bin": {
+    "node-qbittorrent-api-client": "./node-qbittorrent-api-client.js"
+  },
+  "scripts": {
+    "check": "node --check ./node-qbittorrent-api-client.js",
+    "help": "node ./node-qbittorrent-api-client.js --help",
+    "smoke:test": "bash ./tests/smoke-test.sh",
+    "integration:test": "bash ./tests/integration-test.sh"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

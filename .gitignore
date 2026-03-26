@@ -1,0 +1,5 @@
+.env
+.env.*
+.qbt-api-cookie
+tests/.qbt-api-cookie.test
+tests/.docker-test/
