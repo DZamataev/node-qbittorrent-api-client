@@ -13,6 +13,8 @@ Node.js CLI client for the qBittorrent WebUI API.
 
 The client does not read `config.json`. All configuration comes from environment variables with the `QBT_API_` prefix.
 
+When the CLI starts, it also checks for a local `.env` file next to [`node-qbittorrent-api-client.js`](./node-qbittorrent-api-client.js) and uses values from it only for variables that are not already set in the process environment.
+
 Required:
 
 - `QBT_API_URL` — qBittorrent WebUI URL, for example `http://127.0.0.1:8080`
@@ -36,7 +38,15 @@ export QBT_API_USERNAME="admin"
 export QBT_API_PASSWORD="adminadmin"
 ```
 
-You can keep these variables in a local `.env` file if your shell or tooling loads it explicitly.
+You can also keep these variables in a local `.env` file next to the CLI:
+
+```bash
+QBT_API_URL="http://127.0.0.1:8080"
+QBT_API_USERNAME="admin"
+QBT_API_PASSWORD="adminadmin"
+```
+
+If the same variable is already exported in the shell, the exported value wins over `.env`.
 
 ## Usage
 
@@ -63,7 +73,7 @@ Directly:
 From any other directory:
 
 ```bash
-node /Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/node-qbittorrent-api-client.js version
+node /path/to/node-qbittorrent-api-client/node-qbittorrent-api-client.js version
 ```
 
 ## Common Commands
@@ -136,16 +146,21 @@ node ./node-qbittorrent-api-client.js --help
 - `QBT_API_PASSWORD`
 - `QBT_API_COOKIE_FILE`
 
+The CLI reads them in this order:
+
+1. Existing process environment
+2. Local `.env` next to the CLI, only for missing keys
+
 ## Tests
 
-The Docker-based test setup lives in [`/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests`](/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests).
+The Docker-based test setup lives in [`tests`](./tests).
 
 Files:
 
-- [`/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/docker-compose.test.yml`](/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/docker-compose.test.yml)
-- [`/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/test-lib.sh`](/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/test-lib.sh)
-- [`/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/smoke-test.sh`](/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/smoke-test.sh)
-- [`/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/integration-test.sh`](/Users/frenzy/dev/homelab-openclaw-workspace/node-qbittorrent-api-client/tests/integration-test.sh)
+- [`tests/docker-compose.test.yml`](./tests/docker-compose.test.yml)
+- [`tests/test-lib.sh`](./tests/test-lib.sh)
+- [`tests/smoke-test.sh`](./tests/smoke-test.sh)
+- [`tests/integration-test.sh`](./tests/integration-test.sh)
 
 Smoke test:
 

@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 
+const fs = require("fs");
 const fsp = require("fs/promises");
 const path = require("path");
 const { URLSearchParams } = require("url");
 
 const SCRIPT_DIR = __dirname;
+const DEFAULT_ENV_FILE = path.join(SCRIPT_DIR, ".env");
 const DEFAULT_COOKIE_FILE = path.join(SCRIPT_DIR, ".qbt-api-cookie");
+
+loadDotenvFile(DEFAULT_ENV_FILE);
 
 const config = {
   url: process.env.QBT_API_URL || "",
@@ -13,6 +17,49 @@ const config = {
   password: process.env.QBT_API_PASSWORD || "",
   cookieFile: process.env.QBT_API_COOKIE_FILE || DEFAULT_COOKIE_FILE,
 };
+
+function loadDotenvFile(envFile) {
+  let content = "";
+
+  try {
+    content = fs.readFileSync(envFile, "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return;
+    }
+    throw error;
+  }
+
+  for (const rawLine of content.split(/\r?\n/)) {
+    const line = rawLine.trim();
+
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const exportPrefix = line.startsWith("export ") ? "export " : "";
+    const separatorIndex = line.indexOf("=");
+    if (separatorIndex === -1) {
+      continue;
+    }
+
+    const key = line.slice(exportPrefix.length, separatorIndex).trim();
+    if (!key || process.env[key] != null) {
+      continue;
+    }
+
+    let value = line.slice(separatorIndex + 1).trim();
+
+    if (
+      (value.startsWith("\"") && value.endsWith("\"")) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    process.env[key] = value;
+  }
+}
 
 function writeStdout(value) {
   process.stdout.write(`${value}\n`);
@@ -33,6 +80,7 @@ function usage() {
 Usage: ${path.basename(process.argv[1])} <command> [options]
 
 Environment:
+  Values are loaded from ${DEFAULT_ENV_FILE} when present unless already set globally.
   QBT_API_URL            qBittorrent WebUI URL, required
   QBT_API_USERNAME       WebUI username
   QBT_API_PASSWORD       WebUI password
